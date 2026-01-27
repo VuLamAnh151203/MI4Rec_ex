@@ -1,0 +1,12 @@
+# datasets
+# dataset/**/*.pkl
+
+# models
+model/pretrained/
+*.pt
+*.bin
+*.safetensors
+
+# embeddings
+*.pkl
+# *.npz

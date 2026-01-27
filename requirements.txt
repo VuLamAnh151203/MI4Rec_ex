@@ -1,0 +1,11 @@
+# xformers
+fsspec
+huggingface-hub
+numpy
+scipy
+torch
+transformers
+datasets
+wget
+accelerate
+sentence-transformers
