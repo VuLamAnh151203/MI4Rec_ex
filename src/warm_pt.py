@@ -330,9 +330,15 @@ def main():
     pretrained_root = os.path.join(shared_root, "model", "pretrained")
     accelerator.print(f"Loading pretrained weights from {pretrained_root}...")
     local_pretrained_weights_path = os.path.join(pretrained_root, model, "pytorch_model.bin")
+    safe_path = os.path.join(pretrained_root, model, "model.safetensors")
     local_llm_folder = os.path.join(pretrained_root, model)
-    if 'gpt2' in model.lower():
-        LLMmodel.load_state_dict(torch.load(local_pretrained_weights_path), strict=False)
+    if 'gpt2' in model.lower(): 
+        if os.path.exists(safe_path):
+            state_dict = safe_load_file(safe_path)
+        else:
+            state_dict = torch.load(local_pretrained_weights_path, map_location="cpu")
+        
+        LLMmodel.load_state_dict(state_dict, strict=False)
     elif 'llama' in model.lower():
         LLMmodel.from_pretrained(local_llm_folder)
     accelerator.print("Success!")
