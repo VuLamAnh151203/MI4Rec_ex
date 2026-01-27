@@ -556,7 +556,7 @@ def main():
         
         # progress_bar = tqdm(collaborative_data_loader, desc=f"Epoch {epoch + 1}",
         #                     disable=not accelerator.is_local_main_process, ncols=100)
-        for input_ids_prompt, input_ids_main, attention_mask in tqdm(collaborative_data_loader):
+        for input_ids_prompt, input_ids_main, attention_mask in collaborative_data_loader:
             collaborative_optimizer.zero_grad()
 
             input_ids_prompt = input_ids_prompt.to(device)
