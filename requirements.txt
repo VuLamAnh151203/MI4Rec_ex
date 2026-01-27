@@ -9,4 +9,3 @@ datasets
 wget
 accelerate
 sentence-transformers
-torch==2.3.1
