@@ -278,7 +278,6 @@ class DynamicDPELLM4RecBaseModel(nn.Module):
             weighted_item_embeddings = torch.matmul(item_probs, self.meta_item_embeddings.weight)
             weighted_item_embeddings = weighted_item_embeddings * item_mask.unsqueeze(-1)
         elif self.item_logits_infer in ['stella']:
-            print(1)
             item_src_embs = self.item_src_embs(item_ids)
             item_logits = self.item_emb_mapper(item_src_embs)
             item_probs = self.get_probs(item_logits)
@@ -663,6 +662,9 @@ class DynamicCollaborativeGPTwithItemLMHeadBatch(nn.Module):
             active_loss = attention_mask[:, prompt_length+1:].reshape(-1) == 1
             active_logits = shift_logits.view(-1, shift_logits.size(-1))[active_loss]
             active_labels = shift_labels.view(-1)[active_loss]
+
+            print(active_logits)
+            print(active_labels)
 
             # Language modeling loss for the item sequences
             all_losses = [loss_fct(active_logits, active_labels)]
