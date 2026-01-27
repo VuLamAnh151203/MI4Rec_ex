@@ -179,7 +179,7 @@ def main():
     lambda_V = float(args.lambda_V)
     batch_size = args.batch_size
     num_meta = args.num_meta
-    model_path = f'/shared/public/models/'
+    model_path = f'model/pretrained/'
     learning_rate = args.learning_rate
     prob_norm = args.prob_norm
 
