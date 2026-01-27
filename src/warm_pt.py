@@ -8,7 +8,7 @@ import argparse
 from tqdm import tqdm
 
 import numpy as np
-
+from safetensors.torch import load_file as safe_load_file
 import torch
 import torch.nn as nn
 import torch.optim as optim
