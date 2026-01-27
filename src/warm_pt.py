@@ -572,6 +572,7 @@ def main():
                 ).to(device)
                 
             # Forward pass of the collaborative GPT
+            print(input_ids_prompt)
             outputs = collaborative_model(input_ids_prompt, 
                                           input_ids_main, 
                                           labels_main=input_ids_main,
