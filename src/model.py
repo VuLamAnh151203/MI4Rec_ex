@@ -663,9 +663,6 @@ class DynamicCollaborativeGPTwithItemLMHeadBatch(nn.Module):
             active_logits = shift_logits.view(-1, shift_logits.size(-1))[active_loss]
             active_labels = shift_labels.view(-1)[active_loss]
 
-            print(active_logits)
-            print(active_labels)
-
             # Language modeling loss for the item sequences
             all_losses = [loss_fct(active_logits, active_labels)]
             
