@@ -505,7 +505,7 @@ def main():
         # Initialize tqdm progress bar
         # progress_bar = tqdm(review_data_loader, desc=f"Epoch {epoch + 1}", 
         #                     disable=not accelerator.is_local_main_process, ncols=80)
-        for input_ids_prompt, input_ids_main, attention_mask in review_data_loader:
+        for input_ids_prompt, input_ids_main, attention_mask in tqdm(review_data_loader):
             review_optimizer.zero_grad()
 
             # Obtain the data
