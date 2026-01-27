@@ -278,6 +278,7 @@ class DynamicDPELLM4RecBaseModel(nn.Module):
             weighted_item_embeddings = torch.matmul(item_probs, self.meta_item_embeddings.weight)
             weighted_item_embeddings = weighted_item_embeddings * item_mask.unsqueeze(-1)
         elif self.item_logits_infer in ['stella']:
+            print(1)
             item_src_embs = self.item_src_embs(item_ids)
             item_logits = self.item_emb_mapper(item_src_embs)
             item_probs = self.get_probs(item_logits)
