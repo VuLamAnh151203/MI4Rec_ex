@@ -90,7 +90,7 @@ def main():
     num_meta = args.num_meta
     model = args.model
     prob_norm = args.prob_norm
-    model_path = f'/shared/public/models/'
+    model_path = f'model/pretrained'
     rec_model_root = os.path.join(model_root, "model", dataset, model, "rec")
     # cold_start_suffix = f"_{args.cold_start}" if args.cold_start > 0 else ""
     cold_start_suffix = ""
