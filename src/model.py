@@ -358,13 +358,13 @@ class MSEDynamicDPELLM4RecBaseModel(DynamicDPELLM4RecBaseModel):
         self.item_embeddings = nn.Embedding(self.num_items, config.n_embd).to(device)
         self.item_embeddings.weight.data.normal_(mean=0.0, std=config.initializer_range)
         if item_logits_infer == 'stella':
-            all_item_src_embs = pickle.load(open(os.path.join('/shared/user/embs', f"{dataset_name}_item_review_embeddings.pkl"), 'rb'))
+            all_item_src_embs = pickle.load(open(os.path.join('embs', f"{dataset_name}_item_review_embeddings.pkl"), 'rb'))
             self.item_emb_mapper = EmbeddingMapper(all_item_src_embs.shape[1], [400], self.num_item_meta).to(device) 
             self.item_src_embs = nn.Embedding(all_item_src_embs.shape[0], all_item_src_embs.shape[1]).to(device)
             self.item_src_embs.weight.data.copy_(torch.from_numpy(all_item_src_embs))
             self.item_src_embs.weight.requires_grad = False
         if item_logits_infer == 'woMI':
-            all_item_src_embs = pickle.load(open(os.path.join('/shared/user/embs', f"{dataset_name}_item_review_embeddings.pkl"), 'rb'))
+            all_item_src_embs = pickle.load(open(os.path.join('embs', f"{dataset_name}_item_review_embeddings.pkl"), 'rb'))
             self.item_emb_mapper = EmbeddingMapper(all_item_src_embs.shape[1], [400], config.n_embd).to(device) 
             self.item_src_embs = nn.Embedding(all_item_src_embs.shape[0], all_item_src_embs.shape[1]).to(device)
             self.item_src_embs.weight.data.copy_(torch.from_numpy(all_item_src_embs))
