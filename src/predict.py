@@ -149,8 +149,8 @@ def main():
     warm_user_ids = info_dict["warm_test_user"]
     cold_user_ids = info_dict["cold_test_user"]
     user_ids = info_dict["overall_test_user"] if cold_flag else None
-    warm_item_idx = info_dict["warm_item"]
-    cold_item_idx = info_dict["cold_item"]
+    warm_item_idx = info_dict["warm_item"] - 1 # fix index error
+    cold_item_idx = info_dict["cold_item"] - 1 # fix index error
     
     print(train_mat.shape, test_mat.shape, warm_test_mat.shape, cold_test_mat.shape)
     

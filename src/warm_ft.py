@@ -205,8 +205,8 @@ def main():
     if args.cold_start > 0:
         info_dict_path = os.path.join(f'{data_root}{other_cold_suffix}', f"info_dict.pkl")
         info_dict = pickle.load(open(info_dict_path, "rb"))
-        warm_item_idx = info_dict["warm_item"]
-        cold_item_idx = info_dict["cold_item"]
+        warm_item_idx = info_dict["warm_item"] - 1 # fix index error
+        cold_item_idx = info_dict["cold_item"] - 1 # fix index error
         warm_val_user_ids = info_dict["warm_val_user"]
         cold_val_user_ids = info_dict["cold_val_user"]
         val_user_ids = info_dict["overall_val_user"]
@@ -629,12 +629,13 @@ def main():
                     item_scores[train_mat > 0] = -float("inf")  
 
                     # Calculate Recall@K and NDCG@K for each user
-                    target_mat = target_mat.cpu().numpy()
-                    item_scores = item_scores.cpu().numpy()
-                    item_scores[:, cold_item_idx] = -float("inf")
-                    cur_warm_recall_20 += Recall_at_k(target_mat, item_scores, k=20, agg="sum")
-                    cur_warm_recall_40 += Recall_at_k(target_mat, item_scores, k=40, agg="sum")
-                    cur_warm_NDCG_100 += NDCG_at_k(target_mat, item_scores, k=100, agg="sum")
+                    warm_target_mat = target_mat.cpu().numpy()
+                    warm_item_scores = item_scores.cpu().numpy()
+                    print(f"DEBUG: scores shape: {warm_item_scores.shape}, warm_item_idx max: {max(cold_item_idx) if len(cold_item_idx) > 0 else 'empty'}")
+                    warm_item_scores[:, cold_item_idx] = -float("inf")
+                    cur_warm_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
+                    cur_warm_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
+                    cur_warm_NDCG_100 += NDCG_at_k(warm_target_mat, warm_item_scores, k=100, agg="sum")
 
         # Calculate average Recall@K and NDCG@K for the validation set
         val_rec_loss /= len(val_data_loader)
@@ -654,7 +655,7 @@ def main():
             cur_warm_recall_40 /= len(warm_val_data_gen)
             cur_warm_NDCG_100 /= len(warm_val_data_gen)
             cur_warm_sum = cur_warm_recall_20 + cur_warm_recall_40 + cur_warm_NDCG_100
-    
+            
         # Update the best metrics
         if val_rec_loss < best_val_rec_loss:
             best_val_rec_loss = val_rec_loss
