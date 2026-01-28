@@ -134,6 +134,7 @@ def main():
     info_dict_path = os.path.join(f'{data_root}{other_cold_suffix}', f"info_dict.pkl")
     test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"overall_test_matrix.npz" if cold_flag else f"test_matrix.npz")
     warm_test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"warm_test_matrix.npz")
+    print(f"cold_start: {args.cold_start}")
     if dataset == 'yelp' or args.cold_start > 0.2:
         test_suffix = "cold_item_test_matrix.npz"
     else:
