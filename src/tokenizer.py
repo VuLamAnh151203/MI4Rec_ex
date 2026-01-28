@@ -228,7 +228,7 @@ class DynamicBPETokenizer(GPT2Tokenizer):
     
     def _init_user_tokens(self):
         for i in range(self.num_users):
-            token = f"user_{i+1}"
+            token = f"user_{i}"
             self.memory.update_user(
                 2 * i + self.vocab_size + self.USER_OFFSET, 
                 token, 
@@ -237,7 +237,7 @@ class DynamicBPETokenizer(GPT2Tokenizer):
     
     def _init_item_tokens(self):
         for i in range(self.num_items):
-            token = f"item_{i+1}"
+            token = f"item_{i}"
             self.memory.update_item(
                 2 * i + self.vocab_size + self.ITEM_OFFSET, 
                 token, 
