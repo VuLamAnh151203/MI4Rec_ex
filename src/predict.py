@@ -173,8 +173,8 @@ def main():
     '''
     vocab_file = os.path.join(model_path, model, "vocab.json")
     merges_file = os.path.join(model_path, model, "merges.txt")
-    bert_model_path = os.path.join(model_path, "bert-base-uncased")
-    bert_tokenizer_path = os.path.join(model_path, "bert-base-uncased")
+    bert_model_path = os.path.join(model_path, "bert_model")
+    bert_tokenizer_path = os.path.join(model_path, "bert_tokenizer")
     memory = UserItemMemory()
     from data import ITEM_CONTENT_FILES
     tokenizer = DynamicBPETokenizerBatch(vocab_file,
