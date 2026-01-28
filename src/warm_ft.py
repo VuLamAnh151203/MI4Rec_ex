@@ -157,7 +157,7 @@ def main():
     batch_size = args.batch_size
     num_meta = args.num_meta
     model = args.model
-    model_path = f'pretrained/models/'
+    model_path = f'models/pretrained/'
     cold_start_suffix = ""
     learning_rate = args.learning_rate
     prob_norm = args.prob_norm
