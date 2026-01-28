@@ -404,7 +404,7 @@ def main():
     '''
     accelerator.print("-----Begin Setting Up the Training Details-----")
     val_batch_size = 256
-    num_epochs = 50
+    num_epochs = 40
 
 
     '''
