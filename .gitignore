@@ -8,5 +8,5 @@ model/pretrained/
 *.safetensors
 
 # embeddings
-*.pkl
+# *.pkl
 # *.npz
