@@ -1,8 +1,8 @@
 # datasets
 # dataset/**/*.pkl
-
+dataset/beauty/Beauty_item_review_embeddings_full.pkl
 # models
-model/pretrained/
+model/
 *.pt
 *.bin
 *.safetensors
