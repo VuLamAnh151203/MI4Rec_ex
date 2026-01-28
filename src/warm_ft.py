@@ -631,7 +631,7 @@ def main():
                     # Calculate Recall@K and NDCG@K for each user
                     warm_target_mat = target_mat.cpu().numpy()
                     warm_item_scores = item_scores.cpu().numpy()
-                    print(f"DEBUG: scores shape: {warm_item_scores.shape}, warm_item_idx max: {max(cold_item_idx) if len(cold_item_idx) > 0 else 'empty'}")
+                    # print(f"DEBUG: scores shape: {warm_item_scores.shape}, warm_item_idx max: {max(cold_item_idx) if len(cold_item_idx) > 0 else 'empty'}")
                     warm_item_scores[:, cold_item_idx] = -float("inf")
                     cur_warm_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
                     cur_warm_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
