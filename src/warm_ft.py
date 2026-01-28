@@ -497,7 +497,7 @@ def main():
         #progress_bar = tqdm(train_data_loader, desc=f"Epoch {epoch + 1}", ncols=80)
                             #disable=not accelerator.is_local_main_process, ncols=80)
         #for input_ids, target_mat, attention_mask, input_ids_main in progress_bar:
-        for input_ids, target_mat, attention_mask, input_ids_main in train_data_loader:
+        for input_ids, target_mat, attention_mask, input_ids_main in tqdm(train_data_loader):
             optimizer.zero_grad()
 
             input_ids = input_ids.to(device)
