@@ -299,7 +299,7 @@ def main():
         print(f"Recall@40: {cur_recall_40:.4f}")
         print(f"NDCG@100: {cur_NDCG_100:.4f}")
         if cold_flag:
-            for warm_input_ids, warm_train_mat, warm_target_mat, warm_attention_mask in warm_test_data_loader:
+            for warm_input_ids, warm_train_mat, warm_target_mat, warm_attention_mask in tqdm(warm_test_data_loader):
                 # Move tensors to the correct device
                 warm_input_ids = warm_input_ids.to(device)
                 warm_train_mat = warm_train_mat.to(device)
