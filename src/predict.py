@@ -78,7 +78,7 @@ def main():
     parser.add_argument('-p', '--prob_norm', type=str, default="softmax",)
     parser.add_argument('-lr', '--learning_rate', type=float, default=1e-2,)
     parser.add_argument('-cp', '--cold_start_type', type=str, default="random",)
-    parser.add_argument('--calibration', type=bool, default=False, action='store_true',)
+    # parser.add_argument('--calibration', type=bool, default=False, action='store_true',)
     args = parser.parse_args()
     path_suffix = f"{args.lambda_V}_{args.num_meta}_{args.cold_start}_{args.item_logits_infer}_{args.learning_rate}"
     
