@@ -66,7 +66,7 @@ class RecommendationGPTTrainGeneratorBatch(Dataset):
         target_interactions = past_interactions
         
         # Tokenize the input and create the target matrix
-        input_prompt = f"user_{idx} has interacted with {' '.join(['item_' + str(item_id+1) for item_id in input_interactions if item_id is not None])}"
+        input_prompt = f"user_{idx} has interacted with {' '.join(['item_' + str(item_id) for item_id in input_interactions if item_id is not None])}"
         input_prompt += f", user_{idx} will interact with"
 
         target_matrix = torch.zeros(self.num_items, dtype=torch.float32)
@@ -93,7 +93,7 @@ class RecommendationGPTTrainGeneratorBatch(Dataset):
         # Encode and pad the prompt and main texts
         encoded_prompt = self.tokenizer.encode_batch(prompt_texts)
         target_matrices = torch.cat([matrix.unsqueeze(0) for matrix in target_matrices])
-        item_tokens = [" ".join(["item_" + str(item_id+1) for item_id in ids]) for ids in item_ids]
+        item_tokens = [" ".join(["item_" + str(item_id) for item_id in ids]) for ids in item_ids]
         encoded_main = self.tokenizer.encode_batch(item_tokens)
 
         # Get the prompt IDs, target matrices, and attention masks
@@ -161,7 +161,7 @@ class RecommendationGPTTestGeneratorBatch(Dataset):
             random.shuffle(input_interactions)
         
         # Tokenize the input and create the target matrix
-        input_prompt = f"user_{user_idx} has interacted with {' '.join(['item_' + str(item_id+1) for item_id in input_interactions])}"
+        input_prompt = f"user_{user_idx} has interacted with {' '.join(['item_' + str(item_id) for item_id in input_interactions])}"
         input_prompt += f", user_{user_idx} will interact with"
         
         # Obtain the training items
@@ -255,7 +255,7 @@ class CollaborativeGPTGeneratorBatch(Dataset):
 
         # Encode and pad the prompt and main texts
         encoded_prompt = self.tokenizer.encode_batch(prompt_texts)
-        item_tokens = [" ".join(["item_" + str(item_id+1) for item_id in ids]) for ids in item_ids]
+        item_tokens = [" ".join(["item_" + str(item_id) for item_id in ids]) for ids in item_ids]
         encoded_main = self.tokenizer.encode_batch(item_tokens)
 
         # Get the prompt IDs, main IDs, and attention masks

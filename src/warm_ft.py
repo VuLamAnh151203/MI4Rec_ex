@@ -207,9 +207,9 @@ def main():
         info_dict = pickle.load(open(info_dict_path, "rb"))
         warm_item_idx = info_dict["warm_item"] - 1 # fix index error
         cold_item_idx = info_dict["cold_item"] - 1 # fix index error
-        warm_val_user_ids = info_dict["warm_val_user"]
-        cold_val_user_ids = info_dict["cold_val_user"]
-        val_user_ids = info_dict["overall_val_user"]
+        warm_val_user_ids = info_dict["warm_val_user"] - 1
+        cold_val_user_ids = info_dict["cold_val_user"] - 1
+        val_user_ids = info_dict["overall_val_user"] - 1
         cold_val_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"cold_item_val_matrix.npz")
         cold_val_mat = load_npz(cold_val_mat_path)
         warm_val_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"warm_val_matrix.npz")
