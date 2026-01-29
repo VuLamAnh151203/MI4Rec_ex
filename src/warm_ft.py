@@ -486,6 +486,7 @@ def main():
     '''
         Define the pretraining loop for the content GPT
     '''
+    print(num_epochs)
     accelerator.print("-----Begin Rec GPT Pretraining Loop-----")
     for epoch in range(num_epochs):
         # Set the model to the training mode
