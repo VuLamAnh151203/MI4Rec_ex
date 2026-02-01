@@ -434,8 +434,8 @@ def main():
     '''
     accelerator.print("-----Begin Setting Up the Training Details-----")
     # learning_rate = 1e-3
-    num_pretrained_epochs = 2
-    num_epochs = 6
+    # num_pretrained_epochs = 2
+    num_epochs = 30
 
     '''
         Create a data sampler for distributed training
