@@ -153,9 +153,9 @@ def main():
     warm_test_mat = load_npz(warm_test_mat_path)
     cold_test_mat = load_npz(cold_test_mat_path)
     info_dict = pickle.load(open(info_dict_path, "rb"))
-    warm_user_ids = info_dict["warm_test_user"]
-    cold_user_ids = info_dict["cold_test_user"]
-    user_ids = info_dict["overall_test_user"] if cold_flag else None
+    warm_user_ids = info_dict["warm_test_user"] - 1
+    cold_user_ids = info_dict["cold_test_user"] - 1
+    user_ids = info_dict["overall_test_user"] - 1 if cold_flag else None
     warm_item_idx = info_dict["warm_item"] - 1 # fix index error
     cold_item_idx = info_dict["cold_item"] - 1 # fix index error
     
