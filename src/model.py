@@ -195,7 +195,7 @@ class DynamicDPELLM4RecBaseModel(nn.Module):
         self.LLMmodel = LLMmodel
 
         if item_logits_infer == 'original':
-            self.item_embeddings = nn.Embedding(self.num_items, config.n_embd).to(device)
+            self.item_embeddings = nn.Embedding(self.num_items, config.n_embd)
             self.item_embeddings.weight.data.normal_(mean=0.0, std=config.initializer_range)
             del self.meta_item_embeddings
         elif item_logits_infer == 'stella':
@@ -630,12 +630,14 @@ class DynamicCollaborativeGPTwithItemLMHeadBatch(nn.Module):
                 orthogonal=False,
                 lambda_V=None,
                 content_embeds=None,
+                eval = None,
                 **kwargs):
         # Base model forward pass for the prompt text
         item_head = self.get_item_head()
         outputs_prompt = self.base_model(input_ids=input_ids_prompt, 
                                          return_dict=True, 
                                          **kwargs)
+        
         past_key_values = outputs_prompt.past_key_values
 
         # Base model forward pass for the main text with attention mask
@@ -691,6 +693,11 @@ class DynamicCollaborativeGPTwithItemLMHeadBatch(nn.Module):
                 all_losses.append(ortho_loss)
             
             outputs = tuple(all_losses) + outputs
+
+        if eval:
+            average_prompt_embedding = outputs_prompt.last_hidden_state.mean(axis = 1)
+            scores = torch.matmul(average_prompt_embedding, item_head.T)
+            return outputs, scores
         return outputs
 
 class CollaborativeGPTwithItemRecommendHead(nn.Module):

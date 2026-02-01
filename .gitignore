@@ -1,12 +1,13 @@
 # datasets
 # dataset/**/*.pkl
-dataset/beauty/Beauty_item_review_embeddings_full.pkl
+dataset/beauty/Beauty_item_review_embeddings.pkl
 # models
 model/
 *.pt
 *.bin
 *.safetensors
-
+test.ipynb
+src/analyze_pt.ipynb
 # embeddings
 # *.pkl
 # *.npz

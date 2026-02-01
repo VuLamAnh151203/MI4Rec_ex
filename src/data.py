@@ -271,6 +271,73 @@ class CollaborativeGPTGeneratorBatch(Dataset):
             attention_mask = attention_mask[:, :-excess_length]
 
         return prompt_ids, main_ids, attention_mask
+    
+class CollaborativeGPTGeneratorTestBatch(Dataset):
+    """
+    Dataset class for generating collaborative GPT input batches.
+
+    Args:
+        tokenizer (TokenizerWithUserItemIDTokensBatch):
+            Custom tokenizer instance.
+        train_mat (np.ndarray): 
+            Matrix of user-item interactions.
+        max_length (int, optional): 
+            Maximum length of the encoded sequences. 
+            Defaults to 1024.
+    """
+    def __init__(self, tokenizer,test_mat, max_length=1024):
+        super().__init__()
+        self.tokenizer = tokenizer
+        self.test_mat = test_mat
+        self.max_length = max_length
+        self.num_users, self.num_items = test_mat.shape
+            
+    def __len__(self):
+        return self.num_users
+
+    def __getitem__(self, idx):
+        # Tokenize the prompt
+        prompt = f"user_{idx} has interacted with"
+        test_ids = self.test_mat.getrow(idx).nonzero()[1]
+        
+        target_matrix = torch.zeros(self.num_items, dtype=torch.float32)
+        target_matrix[test_ids] = 1.0
+        return prompt, test_ids, target_matrix
+
+    def collate_fn(self, batch):
+        """
+        Custom collate function to encode and pad the batch of texts.
+
+        Args:
+            batch (List[Tuple[str, np.ndarray]]): 
+                List of tuples containing the prompt and item IDs.
+
+        Returns:
+            Tuple[torch.Tensor, torch.Tensor, torch.Tensor]: 
+                Tuple containing the encoded and padded prompt IDs,
+                main IDs, and attention masks.
+        """
+        prompt_texts, item_ids,target_matrices = zip(*batch)
+
+        # Encode and pad the prompt and main texts
+        encoded_prompt = self.tokenizer.encode_batch(prompt_texts)
+        item_tokens = [" ".join(["item_" + str(item_id) for item_id in ids]) for ids in item_ids]
+        encoded_main = self.tokenizer.encode_batch(item_tokens)
+
+        # Get the prompt IDs, main IDs, and attention masks
+        prompt_ids = torch.tensor(encoded_prompt[0])
+        main_ids = torch.tensor(encoded_main[0])
+        attention_mask = torch.cat((torch.tensor(encoded_prompt[1]), torch.tensor(encoded_main[1])), dim=1)
+
+        target_matrices = torch.cat([matrix.unsqueeze(0) for matrix in target_matrices])
+        # Truncate main IDs and attention mask if total length exceeds the maximum length
+        total_length = prompt_ids.size(1) + main_ids.size(1)
+        if total_length > self.max_length:
+            excess_length = total_length - self.max_length
+            main_ids = main_ids[:, :-excess_length]
+            attention_mask = attention_mask[:, :-excess_length]
+
+        return prompt_ids, main_ids, target_matrices, attention_mask
 
 
 class UserItemContentGPTDatasetBatch(Dataset):
