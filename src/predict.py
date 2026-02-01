@@ -337,6 +337,7 @@ def main():
                                                     lambda_V=lambda_V)
 
                 # Calculate Recall@K and NDCG@K for each user
+                warm_item_scores[warm_train_mat > 0] = -float("inf")
                 warm_target_mat = warm_target_mat.cpu().numpy()
                 warm_item_scores = warm_item_scores.cpu().numpy()
                 warm_item_scores[:, cold_item_idx] = -float("inf")
