@@ -144,6 +144,8 @@ def main():
     else:
         test_suffix = "cold_test_matrix.npz"
     cold_test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', test_suffix)
+    print(cold_test_mat_path)
+    print(warm_test_mat_path)
     print(f"Loading data from {test_mat_path}...")
     
     train_mat = load_npz(train_mat_path)
