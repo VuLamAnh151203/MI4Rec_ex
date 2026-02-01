@@ -322,34 +322,31 @@ def main():
         print(f"NDCG@100: {cur_NDCG_100:.4f}")
         if cold_flag:
             print("Evaluate Warm")
-            try:
-                for warm_input_ids, warm_train_mat, warm_target_mat, warm_attention_mask in tqdm(warm_test_data_loader):
-                    # Move tensors to the correct device
-                    
-                    warm_input_ids = warm_input_ids.to(device)
-                    warm_train_mat = warm_train_mat.to(device)
-                    warm_target_mat = warm_target_mat.to(device)
-                    warm_attention_mask = warm_attention_mask.to(device)
+            for warm_input_ids, warm_train_mat, warm_target_mat, warm_attention_mask in tqdm(warm_test_data_loader):
+                # Move tensors to the correct device
+                
+                warm_input_ids = warm_input_ids.to(device)
+                warm_train_mat = warm_train_mat.to(device)
+                warm_target_mat = warm_target_mat.to(device)
+                warm_attention_mask = warm_attention_mask.to(device)
 
-                    # Get item scores and rank them
-                    warm_rec_loss, warm_item_scores = rec_model(warm_input_ids, 
-                                                        warm_target_mat, 
-                                                        warm_attention_mask,
-                                                        lambda_V=lambda_V)
+                # Get item scores and rank them
+                warm_rec_loss, warm_item_scores = rec_model(warm_input_ids, 
+                                                    warm_target_mat, 
+                                                    warm_attention_mask,
+                                                    lambda_V=lambda_V)
 
-                    # Calculate Recall@K and NDCG@K for each user
-                    warm_target_mat = warm_target_mat.cpu().numpy()
-                    warm_item_scores = warm_item_scores.cpu().numpy()
-                    warm_item_scores[:, cold_item_idx] = -float("inf")
-                    warm_cur_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
-                    warm_cur_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
-                    warm_cur_NDCG_100 += NDCG_at_k(warm_target_mat, warm_item_scores, k=100, agg="sum")
-            except:
-                pass
+                # Calculate Recall@K and NDCG@K for each user
+                warm_target_mat = warm_target_mat.cpu().numpy()
+                warm_item_scores = warm_item_scores.cpu().numpy()
+                warm_item_scores[:, cold_item_idx] = -float("inf")
+                warm_cur_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
+                warm_cur_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
+                warm_cur_NDCG_100 += NDCG_at_k(warm_target_mat, warm_item_scores, k=100, agg="sum")
             
-            warm_cur_recall_20 /= len(warm_test_data_gen) - 1
-            warm_cur_recall_40 /= len(warm_test_data_gen) - 1
-            warm_cur_NDCG_100 /= len(warm_test_data_gen) - 1
+            warm_cur_recall_20 /= len(warm_test_data_gen)
+            warm_cur_recall_40 /= len(warm_test_data_gen)
+            warm_cur_NDCG_100 /= len(warm_test_data_gen)
             
             print(f"Warm Testing Results:")
             print(f"Recall@20: {warm_cur_recall_20:.4f}")
