@@ -498,54 +498,55 @@ def main():
     '''
         Define the pretraining loop for the content GPT
     '''
-    accelerator.print("-----Begin Content GPT Pretraining Loop-----")
-    for epoch in range(num_pretrained_epochs):
-        review_total_loss = 0
+    # accelerator.print("-----Begin Content GPT Pretraining Loop-----")
+    # for epoch in range(num_pretrained_epochs):
+    #     review_total_loss = 0
         
-        # Initialize tqdm progress bar
-        # progress_bar = tqdm(review_data_loader, desc=f"Epoch {epoch + 1}", 
-        #                     disable=not accelerator.is_local_main_process, ncols=80)
-        for input_ids_prompt, input_ids_main, attention_mask in tqdm(review_data_loader):
-            review_optimizer.zero_grad()
+    #     # Initialize tqdm progress bar
+    #     # progress_bar = tqdm(review_data_loader, desc=f"Epoch {epoch + 1}", 
+    #     #                     disable=not accelerator.is_local_main_process, ncols=80)
+    #     for input_ids_prompt, input_ids_main, attention_mask in tqdm(review_data_loader):
+    #         review_optimizer.zero_grad()
 
-            # Obtain the data
-            input_ids_prompt = input_ids_prompt.to(device)
-            input_ids_main = input_ids_main.to(device)
-            attention_mask = attention_mask.to(device)
+    #         # Obtain the data
+    #         input_ids_prompt = input_ids_prompt.to(device)
+    #         input_ids_main = input_ids_main.to(device)
+    #         attention_mask = attention_mask.to(device)
 
-            # Forward pass
-            outputs = content_model(input_ids_prompt, 
-                                    input_ids_main, 
-                                    labels_main=input_ids_main,
-                                    attention_mask=attention_mask)
-            review_loss = outputs[0]
+    #         # Forward pass
+    #         outputs = content_model(input_ids_prompt, 
+    #                                 input_ids_main, 
+    #                                 labels_main=input_ids_main,
+    #                                 attention_mask=attention_mask)
+    #         review_loss = outputs[0]
 
-            # Backward pass and optimization
-            accelerator.backward(review_loss)
-            review_optimizer.step()
+    #         # Backward pass and optimization
+    #         accelerator.backward(review_loss)
+    #         review_optimizer.step()
 
-            review_total_loss += review_loss.item()
-            # progress_bar.set_postfix({"Review Loss": review_loss.item()})
+    #         review_total_loss += review_loss.item()
+    #         # progress_bar.set_postfix({"Review Loss": review_loss.item()})
 
-        thread_review_average_loss = torch.tensor([review_total_loss / len(review_data_loader)]).to(device)
-        gathered_review_average_loss = accelerator.gather(thread_review_average_loss)
-        review_average_loss = torch.mean(gathered_review_average_loss)
-        accelerator.print(f"Epoch {epoch + 1} - Review Average Loss: {review_average_loss:.4f}")
+    #     thread_review_average_loss = torch.tensor([review_total_loss / len(review_data_loader)]).to(device)
+    #     gathered_review_average_loss = accelerator.gather(thread_review_average_loss)
+    #     review_average_loss = torch.mean(gathered_review_average_loss)
+    #     accelerator.print(f"Epoch {epoch + 1} - Review Average Loss: {review_average_loss:.4f}")
 
-        # Check if the current loss is better than the best_loss
-        if review_average_loss < review_best_loss:
-            review_best_loss = review_average_loss
+    #     # Check if the current loss is better than the best_loss
+    #     if review_average_loss < review_best_loss:
+    #         review_best_loss = review_average_loss
 
-            # Save user embeddings in the main process 
-            content_weight_root = os.path.join(content_model_root, f"content_model_{path_suffix}.pth")
-            if accelerator.is_main_process:
-                torch.save(accelerator.unwrap_model(content_model).state_dict(), content_weight_root)
-    accelerator.print("-----End Content GPT Pretraining Loop-----")
+    #         # Save user embeddings in the main process 
+    #         content_weight_root = os.path.join(content_model_root, f"content_model_{path_suffix}.pth")
+    #         if accelerator.is_main_process:
+    #             torch.save(accelerator.unwrap_model(content_model).state_dict(), content_weight_root)
+    # accelerator.print("-----End Content GPT Pretraining Loop-----")
 
 
     '''
         Iteratively training the collaborative and content GPT model for recommendations
     '''
+    regularize = False
     accelerator.print("-----Begin the Iterative Training Loop-----")
     for epoch in range(num_epochs):
         '''
@@ -577,11 +578,14 @@ def main():
                                           input_ids_main, 
                                           labels_main=input_ids_main,
                                           attention_mask=attention_mask,
-                                          regularize=True,
+                                          regularize=regularize,
                                           lambda_V=lambda_V,
                                           content_embeds=content_embeds)
             collaborative_loss = outputs[0]
-            regularize_loss = outputs[1]
+            if regularize:
+                regularize_loss = outputs[1]
+            else:
+                regularize_loss = torch.tensor(0).to(device)
 
             # Backward pass and optimization
             accelerator.backward(collaborative_loss)
@@ -618,64 +622,67 @@ def main():
         '''
             Optimize the content GPT model
         '''
-        review_total_loss = 0
-        regularize_total_loss = 0
+        # review_total_loss = 0
+        # regularize_total_loss = 0
         
-        # progress_bar = tqdm(review_data_loader, desc=f"Epoch {epoch + 1}", 
-        #                     disable=not accelerator.is_local_main_process, ncols=100)
-        for input_ids_prompt, input_ids_main, attention_mask in tqdm(review_data_loader):
-            review_optimizer.zero_grad()
+        # # progress_bar = tqdm(review_data_loader, desc=f"Epoch {epoch + 1}", 
+        # #                     disable=not accelerator.is_local_main_process, ncols=100)
+        # for input_ids_prompt, input_ids_main, attention_mask in tqdm(review_data_loader):
+        #     review_optimizer.zero_grad()
 
-            input_ids_prompt = input_ids_prompt.to(device)
-            input_ids_main = input_ids_main.to(device)
-            attention_mask = attention_mask.to(device)
+        #     input_ids_prompt = input_ids_prompt.to(device)
+        #     input_ids_main = input_ids_main.to(device)
+        #     attention_mask = attention_mask.to(device)
 
-            accelerator.wait_for_everyone()
-            with torch.no_grad():
-                collaborative_embeds = accelerator.unwrap_model(collaborative_model).\
-                                       base_model.embed(input_ids_prompt).to(device)
+        #     accelerator.wait_for_everyone()
+        #     with torch.no_grad():
+        #         collaborative_embeds = accelerator.unwrap_model(collaborative_model).\
+        #                                base_model.embed(input_ids_prompt).to(device)
                 
-            # Forward pass of the content GPT
-            outputs = content_model(input_ids_prompt, 
-                                    input_ids_main, 
-                                    labels_main=input_ids_main,
-                                    attention_mask=attention_mask,
-                                    regularize=True,
-                                    lambda_V=lambda_V,
-                                    collaborative_embeds=collaborative_embeds)
-            review_loss = outputs[0]
-            regularize_loss = outputs[1]
+        #     # Forward pass of the content GPT
+        #     outputs = content_model(input_ids_prompt, 
+        #                             input_ids_main, 
+        #                             labels_main=input_ids_main,
+        #                             attention_mask=attention_mask,
+        #                             regularize=regularize,
+        #                             lambda_V=lambda_V,
+        #                             collaborative_embeds=collaborative_embeds)
+        #     review_loss = outputs[0]
+        #     if regularize:
+        #         regularize_loss = outputs[1]
+        #     else:
+        #         regularize_loss = torch.tensor(0).to(device)
 
-            # Backward pass and optimization
-            accelerator.backward(review_loss)
-            review_optimizer.step()
+        #     # Backward pass and optimization
+        #     accelerator.backward(review_loss)
+        #     review_optimizer.step()
 
-            review_total_loss += review_loss.item()
-            regularize_total_loss += regularize_loss.item()
-            # progress_bar.set_postfix({"Review Loss": review_loss.item(),
-            #                           "Regularize Loss": regularize_loss.item()})
+        #     review_total_loss += review_loss.item()
+        #     regularize_total_loss += regularize_loss.item()
+        #     # progress_bar.set_postfix({"Review Loss": review_loss.item(),
+        #     #                           "Regularize Loss": regularize_loss.item()})
 
-        # Gather the content LM loss from different device
-        thread_review_average_loss = torch.tensor([review_total_loss / len(review_data_loader)]).to(device)
-        gathered_review_average_loss = accelerator.gather(thread_review_average_loss)
-        review_average_loss = torch.mean(gathered_review_average_loss)
-        accelerator.print(f"Epoch {epoch + 1} - Review Average Loss: {review_average_loss:.4f}")
+        # # Gather the content LM loss from different device
+        # thread_review_average_loss = torch.tensor([review_total_loss / len(review_data_loader)]).to(device)
+        # gathered_review_average_loss = accelerator.gather(thread_review_average_loss)
+        # review_average_loss = torch.mean(gathered_review_average_loss)
+        # accelerator.print(f"Epoch {epoch + 1} - Review Average Loss: {review_average_loss:.4f}")
         
-        # Gather the regularize loss from different device
-        thread_regularize_average_loss = torch.tensor([regularize_total_loss / len(review_data_loader)]).to(device)
-        gathered_regularize_average_loss = accelerator.gather(thread_regularize_average_loss)
-        regularize_average_loss = torch.mean(gathered_regularize_average_loss)
-        accelerator.print(f"Epoch {epoch + 1} - Average Regularize Loss: {regularize_average_loss:.4f}")
+        # # Gather the regularize loss from different device
+        # thread_regularize_average_loss = torch.tensor([regularize_total_loss / len(review_data_loader)]).to(device)
+        # gathered_regularize_average_loss = accelerator.gather(thread_regularize_average_loss)
+        # regularize_average_loss = torch.mean(gathered_regularize_average_loss)
+        # accelerator.print(f"Epoch {epoch + 1} - Average Regularize Loss: {regularize_average_loss:.4f}")
 
-        # Check if the current loss is better than the best_loss
-        accelerator.wait_for_everyone()
-        if review_average_loss < review_best_loss:
-            review_best_loss = review_average_loss
+        # # Check if the current loss is better than the best_loss
+        # accelerator.wait_for_everyone()
+        # if review_average_loss < review_best_loss:
+        #     review_best_loss = review_average_loss
 
-            # Save user embeddings in the main process
-            content_weight_root = os.path.join(content_model_root, f"content_model_{path_suffix}.pth")
-            if accelerator.is_main_process:
-                torch.save(accelerator.unwrap_model(content_model).state_dict(), content_weight_root)
+        #     # Save user embeddings in the main process
+        #     content_weight_root = os.path.join(content_model_root, f"content_model_{path_suffix}.pth")
+        #     if accelerator.is_main_process:
+        #         torch.save(accelerator.unwrap_model(content_model).state_dict(), content_weight_root)
 
 
 if __name__ == "__main__":
