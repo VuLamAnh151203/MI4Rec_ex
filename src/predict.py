@@ -133,13 +133,13 @@ def main():
     
     info_dict_path = os.path.join(f'{data_root}{other_cold_suffix}', f"info_dict.pkl")
     test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"overall_test_matrix.npz" if cold_flag else f"test_matrix.npz")
-    # warm_test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"warm_test_matrix.npz")
-    warm_test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"warm_val_matrix.npz")
+    warm_test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"warm_test_matrix.npz")
+    # warm_test_mat_path = os.path.join(f'{data_root}{other_cold_suffix}', f"warm_val_matrix.npz")
 
     # print(f"cold_start: {args.cold_start}")
     if dataset == 'yelp' or args.cold_start >= 0.2:
-        # test_suffix = "cold_item_test_matrix.npz"
-        test_suffix = "cold_item_val_matrix.npz"
+        test_suffix = "cold_item_test_matrix.npz"
+        # test_suffix = "cold_item_val_matrix.npz"
 
     else:
         test_suffix = "cold_test_matrix.npz"
@@ -153,8 +153,8 @@ def main():
     warm_test_mat = load_npz(warm_test_mat_path)
     cold_test_mat = load_npz(cold_test_mat_path)
     info_dict = pickle.load(open(info_dict_path, "rb"))
-    warm_user_ids = info_dict["warm_val_user"] - 1
-    cold_user_ids = info_dict["cold_val_user"] - 1
+    warm_user_ids = info_dict["warm_test_user"] - 1
+    cold_user_ids = info_dict["cold_test_user"] - 1
     user_ids = info_dict["overall_test_user"] - 1 if cold_flag else None
     warm_item_idx = info_dict["warm_item"] - 1 # fix index error
     cold_item_idx = info_dict["cold_item"] - 1 # fix index error
