@@ -374,7 +374,7 @@ def main():
                                                     cold_attention_mask,
                                                     lambda_V=lambda_V)
                 
-                cold_item_scores[cold_train_mat > 0] = -float("inf")
+                # cold_item_scores[cold_train_mat > 0] = -float("inf")
                 # Calculate Recall@K and NDCG@K for each user
                 cold_target_mat = cold_target_mat.cpu().numpy()
                 cold_item_scores = cold_item_scores.cpu().numpy()
