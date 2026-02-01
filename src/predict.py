@@ -316,7 +316,7 @@ def main():
         print(f"NDCG@100: {cur_NDCG_100:.4f}")
         if cold_flag:
             print("Evaluate Warm")
-            for warm_input_ids, warm_train_mat, warm_target_mat, warm_attention_mask in tqdm(warm_test_data_loader):
+            for warm_input_ids, warm_train_mat, warm_target_mat, warm_attention_mask in tqdm(warm_test_data_loader[:-1]):
                 # Move tensors to the correct device
                 
                 warm_input_ids = warm_input_ids.to(device)
