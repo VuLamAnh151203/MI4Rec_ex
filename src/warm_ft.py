@@ -525,11 +525,11 @@ def main():
                                 main_ids=input_ids_main,
                                 content_embeds=None)
             rec_loss = outputs[0]
-            # regularize_loss = outputs[1]
-            if regularize:
-                regularize_loss = outputs[1]
-            else:
-                regularize_loss = torch.tensor(0).to(device)
+            regularize_loss = outputs[1]
+            # if regularize:
+            #     regularize_loss = outputs[1]
+            # else:
+            #     regularize_loss = torch.tensor(0).to(device)
             # Backward pass and optimization
             accelerator.backward(rec_loss)
             optimizer.step()
