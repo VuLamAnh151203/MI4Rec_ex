@@ -9,6 +9,7 @@ model/
 test.ipynb
 src/analyze_pt.ipynb
 test.ipynb
+embs/
 # embeddings
 # *.pkl
 # *.npz

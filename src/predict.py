@@ -337,20 +337,20 @@ def main():
                                                     lambda_V=lambda_V)
 
                 # Calculate Recall@K and NDCG@K for each user
-                # warm_item_scores[warm_train_mat > 0] = -float("inf")
-                # warm_target_mat = warm_target_mat.cpu().numpy()
-                # warm_item_scores = warm_item_scores.cpu().numpy()
-                # warm_item_scores[:, cold_item_idx] = -float("inf")
-                # warm_cur_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
-                # warm_cur_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
-                # warm_cur_NDCG_100 += NDCG_at_k(warm_target_mat, warm_item_scores, k=100, agg="sum")
-
+                warm_item_scores[warm_train_mat > 0] = -float("inf")
                 warm_target_mat = warm_target_mat.cpu().numpy()
                 warm_item_scores = warm_item_scores.cpu().numpy()
                 warm_item_scores[:, cold_item_idx] = -float("inf")
                 warm_cur_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
                 warm_cur_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
                 warm_cur_NDCG_100 += NDCG_at_k(warm_target_mat, warm_item_scores, k=100, agg="sum")
+
+                # warm_target_mat = warm_target_mat.cpu().numpy()
+                # warm_item_scores = warm_item_scores.cpu().numpy()
+                # warm_item_scores[:, cold_item_idx] = -float("inf")
+                # warm_cur_recall_20 += Recall_at_k(warm_target_mat, warm_item_scores, k=20, agg="sum")
+                # warm_cur_recall_40 += Recall_at_k(warm_target_mat, warm_item_scores, k=40, agg="sum")
+                # warm_cur_NDCG_100 += NDCG_at_k(warm_target_mat, warm_item_scores, k=100, agg="sum")
             
             warm_cur_recall_20 /= len(warm_test_data_gen)
             warm_cur_recall_40 /= len(warm_test_data_gen)
@@ -374,7 +374,7 @@ def main():
                                                     cold_attention_mask,
                                                     lambda_V=lambda_V)
                 
-                # cold_item_scores[cold_train_mat > 0] = -float("inf")
+                cold_item_scores[cold_train_mat > 0] = -float("inf")
                 # Calculate Recall@K and NDCG@K for each user
                 cold_target_mat = cold_target_mat.cpu().numpy()
                 cold_item_scores = cold_item_scores.cpu().numpy()
