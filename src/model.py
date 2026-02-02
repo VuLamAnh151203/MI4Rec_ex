@@ -857,6 +857,7 @@ class DynamicCollaborativeGPTwithItemRecommendHead(nn.Module):
                 axis=1
             )
             if isinstance(self.base_model, MSEDynamicDPELLM4RecBaseModel):
+                print("MSEDynamicDPELLM4RecBaseModel")
                 original_rec_embeds_prompt = self.base_model.original_embed(input_ids)
                 original_rec_embeds_target = self.base_model.original_embed(main_ids)
                 content_embeds = torch.cat(

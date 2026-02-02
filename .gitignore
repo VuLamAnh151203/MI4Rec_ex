@@ -8,6 +8,7 @@ model/
 *.safetensors
 test.ipynb
 src/analyze_pt.ipynb
+test.ipynb
 # embeddings
 # *.pkl
 # *.npz

@@ -487,6 +487,8 @@ def main():
         Define the pretraining loop for the content GPT
     '''
     print(num_epochs)
+    regularize = True
+    print("regularize: ", regularize)
     accelerator.print("-----Begin Rec GPT Pretraining Loop-----")
     for epoch in range(num_epochs):
         # Set the model to the training mode
@@ -518,13 +520,16 @@ def main():
             outputs = rec_model(input_ids, 
                                 target_mat, 
                                 attention_mask=attention_mask,
-                                regularize=True,
+                                regularize=regularize,
                                 lambda_V=lambda_V,
                                 main_ids=input_ids_main,
                                 content_embeds=None)
             rec_loss = outputs[0]
-            regularize_loss = outputs[1]
-
+            # regularize_loss = outputs[1]
+            if regularize:
+                regularize_loss = outputs[1]
+            else:
+                regularize_loss = torch.tensor(0).to(device)
             # Backward pass and optimization
             accelerator.backward(rec_loss)
             optimizer.step()
