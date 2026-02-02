@@ -486,7 +486,7 @@ def main():
     '''
         Define the pretraining loop for the content GPT
     '''
-    print(num_epochs)
+    print("num_epochs: ", num_epochs)
     regularize = True
     print("regularize: ", regularize)
     accelerator.print("-----Begin Rec GPT Pretraining Loop-----")
